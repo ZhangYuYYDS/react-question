@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import type { FC } from 'react'
+import React, { useState, FC } from 'react'
 import QuestionCard from './components/QuestionCard'
+import { produce } from 'immer'
 
 const List2: FC = () => {
   // state是不可变数据，setState是修改state的唯一方式
@@ -9,22 +9,43 @@ const List2: FC = () => {
     { id: '2', title: '问卷2', isPublished: false },
   ])
 
+  // 新增问卷
   const add = () => {
     console.log('add')
     const randowId = Math.random().toString().slice(-3)
-    setQuestionList([...questionList, { id: `${randowId}`, title: `问卷${randowId}`, isPublished: true }])
+    // immer的方式
+    setQuestionList(
+      produce(draft => {
+        draft.push({ id: `${randowId}`, title: `问卷${randowId}`, isPublished: true })
+      })
+    )
+
+    // setQuestionList([...questionList, { id: `${randowId}`, title: `问卷${randowId}`, isPublished: true }])
   }
 
   // 删除问卷
   const deleteQuestion = (id: string) => {
-    console.log('del')
-    setQuestionList(questionList.filter(question => question.id !== id))
+    // immer的方式
+    const index = questionList.findIndex(question => question.id === id)
+    setQuestionList(
+      produce(draft => {
+        draft.splice(index, 1)
+      })
+    )
+
+    // setQuestionList(questionList.filter(question => question.id !== id))
   }
 
   // 发布问卷
   const publishQuestion = (id: string) => {
-    console.log('publish')
-    setQuestionList(questionList.map(question => (question.id === id ? { ...question, isPublished: true } : question)))
+    // immer的方式
+    setQuestionList(
+      produce(draft => {
+        const index = draft.findIndex(question => question.id === id)
+        draft[index].isPublished = true
+      })
+    )
+    // setQuestionList(questionList.map(question => (question.id === id ? { ...question, isPublished: true } : question)))
   }
 
   return (
