@@ -25,13 +25,10 @@ module.exports = {
 
   parser: 'typescript',
 
-  // 忽略文件
-  ignorePath: '.prettierignore',
-
   // 是否保留注释前的换行符
   commentPreserveNewlines: false,
 
   noExtraSemi: false, // 可选，保留多余的分号
 
-  eslintIntegration: false
+  eslintIntegration: false,
 }
