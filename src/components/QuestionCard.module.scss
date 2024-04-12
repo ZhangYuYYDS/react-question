@@ -2,6 +2,16 @@
     border: 1px solid fuchsia;
     padding: 10px;
     margin-bottom: 16px;
+
+
+    /* 嵌套 */
+    .published-span{
+        color: yellowgreen;
+    }
+
+    .no-published-span{
+        color: red;
+    }
 }
 
 .published{

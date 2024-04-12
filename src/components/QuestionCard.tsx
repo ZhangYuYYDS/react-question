@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import classNames from 'classnames'
 // import './QuestionCard.css'
-import styles from './QuestionCard.module.css'
+import styles from './QuestionCard.module.scss'
 
 // ts 自定义类型
 type PropTypes = {
@@ -55,7 +55,11 @@ const QuestionCard: FC<PropTypes> = props => {
     <div key={id} className={itemClassName}>
       <strong> {title}</strong>
       &nbsp;
-      {isPublished ? <span style={{ color: 'green' }}>已发布</span> : <span style={{ color: 'red' }}>未发布</span>}
+      {isPublished ? (
+        <span className={styles['published-span']}>已发布</span>
+      ) : (
+        <span className={styles['no-published-span']}>未发布</span>
+      )}
       &nbsp;
       <button
         onClick={() => {
