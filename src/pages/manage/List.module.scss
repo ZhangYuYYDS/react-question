@@ -6,12 +6,10 @@
 
 
     .left {
-        background-color: red;
         flex: 1
     }
 
     .right {
-        background-color: blue;
         flex: 1;
         text-align: right;
     }
@@ -23,8 +21,4 @@
 
 .footer{
     text-align: center;
-}
-
-body{
-    background-color: #f1f1f1;
 }

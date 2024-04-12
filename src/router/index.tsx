@@ -74,3 +74,16 @@ const router = createBrowserRouter([
 ])
 
 export default router
+
+// ---------------------------分割线
+export const Login_PathNAME = '/login'
+export const Register_PathNAME = '/register'
+export const Home_PathNAME = '/'
+export const Manage_PathNAME = '/manage'
+export const List_PathNAME = '/manage/list'
+export const Star_PathNAME = '/manage/star'
+export const Trash_PathNAME = '/manage/trash'
+export const Edit_PathNAME = '/question/edit/:id'
+export const Stat_PathNAME = '/question/stat/:id'
+
+// ---------------------------分割线
