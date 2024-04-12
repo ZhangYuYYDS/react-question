@@ -1,19 +1,46 @@
-.list-item{
-    border: 1px solid fuchsia;
+.container {
     padding: 10px;
     margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f5f5f5;
+    border-radius: 4px;
+    background-color: #fff;
 
-
-    /* 嵌套 */
-    .published-span{
-        color: yellowgreen;
+    &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .no-published-span{
-        color: red;
+    .title {
+        display: flex;
+
+        .left {
+            flex: 1;
+        }
+
+        .right {
+            flex: 1;
+            text-align: right;
+        }
+    }
+
+
+    .button-container{
+        display: flex;
+    
+        .left {
+            flex: 1;
+        }
+
+        .right {
+            flex: 1;
+            text-align: right;
+        }
     }
 }
 
-.published{
+
+
+
+.published {
     border: 1px solid greenyellow;
 }

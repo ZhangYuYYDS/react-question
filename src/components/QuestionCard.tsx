@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import classNames from 'classnames'
-// import './QuestionCard.css'
 import styles from './QuestionCard.module.scss'
 
 // ts 自定义类型
@@ -8,16 +7,19 @@ type PropTypes = {
   id: string
   title: string
   isPublished: boolean
+  isStar?: boolean
+  answerCount?: number
+  createdAt?: string
   deleteQuestion?: (id: string) => void
   publishQuestion?: (id: string) => void
 }
 
 const QuestionCard: FC<PropTypes> = props => {
-  const { id, title, isPublished, deleteQuestion, publishQuestion } = props
+  const { id, title, isPublished, isStar, answerCount, createdAt, deleteQuestion, publishQuestion } = props
   // 编辑问卷
-  const edit = (id: string) => {
-    console.log(`编辑问卷${id}`)
-  }
+  // const edit = (id: string) => {
+  //   console.log(`编辑问卷${id}`)
+  // }
 
   /**
    * ! 删除问卷
@@ -25,10 +27,10 @@ const QuestionCard: FC<PropTypes> = props => {
    * - 父函数中有一个del函数，负责删除问卷
    * - 子组件只需要拿到del函数并调用即可
    */
-  const del = (id: string) => {
-    console.log(`delete question ${id}`)
-    deleteQuestion && deleteQuestion(id)
-  }
+  // const del = (id: string) => {
+  //   console.log(`delete question ${id}`)
+  //   deleteQuestion && deleteQuestion(id)
+  // }
 
   /**
    * ! 发布问卷
@@ -36,10 +38,10 @@ const QuestionCard: FC<PropTypes> = props => {
    * - 父函数中有一个pub函数，负责修改questionList中的isPublished属性
    * - 子组件只需要拿到pub函数并调用即可
    */
-  const pub = (id: string) => {
-    console.log(`publish question ${id}`)
-    publishQuestion && publishQuestion(id)
-  }
+  // const pub = (id: string) => {
+  //   console.log(`publish question ${id}`)
+  //   publishQuestion && publishQuestion(id)
+  // }
 
   // 简单处理，适用于一些简单的逻辑
   // let itemClassName = 'list-item'
@@ -52,16 +54,39 @@ const QuestionCard: FC<PropTypes> = props => {
   })
 
   return (
-    <div key={id} className={itemClassName}>
-      <strong> {title}</strong>
-      &nbsp;
-      {isPublished ? (
-        <span className={styles['published-span']}>已发布</span>
-      ) : (
-        <span className={styles['no-published-span']}>未发布</span>
-      )}
-      &nbsp;
-      <button
+    <>
+      {/* 一个问卷卡片 */}
+      <div className={styles['container']}>
+        {/* 上部分 */}
+        <div className={styles['title']}>
+          <div className={styles['left']}>
+            <a href="#">{title}</a>
+          </div>
+
+          <div className={styles['right']}>
+            {isPublished ? <span>已发布</span> : <span>未发布</span>}
+            &nbsp;
+            <span>答卷:{answerCount}</span>
+            &nbsp;
+            <span>{createdAt}</span>
+          </div>
+        </div>
+        {/* 下部分 */}
+        <div className={styles['button-container']}>
+          <div className={styles['left']}>
+            <button>编辑问卷</button>
+            <button>数据统计</button>
+          </div>
+          <div className={styles['right']}>
+            <button>标星</button>
+            <button>复制</button>
+            <button>删除</button>
+          </div>
+        </div>
+      </div>
+
+      {/* &nbsp; */}
+      {/* <button
         onClick={() => {
           edit(id)
         }}
@@ -83,8 +108,8 @@ const QuestionCard: FC<PropTypes> = props => {
         }}
       >
         删除问卷
-      </button>
-    </div>
+      </button> */}
+    </>
   )
 }
 

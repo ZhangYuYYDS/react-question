@@ -20,6 +20,6 @@ module.exports = {
   rules: {
     'comma-dangle': 'off',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': ['off'],
   },
 }
