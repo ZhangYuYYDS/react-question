@@ -1,6 +1,16 @@
 import React, { FC } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import classNames from 'classnames'
 import styles from './QuestionCard.module.scss'
+import { Button, Space, Divider, Tag } from 'antd'
+import {
+  EditOutlined,
+  StarOutlined,
+  DeleteOutlined,
+  LineChartOutlined,
+  CopyOutlined,
+  StarFilled,
+} from '@ant-design/icons'
 
 // ts 自定义类型
 type PropTypes = {
@@ -16,6 +26,10 @@ type PropTypes = {
 
 const QuestionCard: FC<PropTypes> = props => {
   const { id, title, isPublished, isStar, answerCount, createdAt, deleteQuestion, publishQuestion } = props
+
+  // 路由跳转
+  const nav = useNavigate()
+
   // 编辑问卷
   // const edit = (id: string) => {
   //   console.log(`编辑问卷${id}`)
@@ -60,27 +74,55 @@ const QuestionCard: FC<PropTypes> = props => {
         {/* 上部分 */}
         <div className={styles['title']}>
           <div className={styles['left']}>
-            <a href="#">{title}</a>
+            <Link to={isPublished ? `/question/stat/${id}` : `/question/edit/${id}`}>
+              <Space>
+                {title}
+                {isStar ? <StarFilled style={{ color: 'rgb(252, 248, 5)' }} /> : <StarOutlined />}
+              </Space>
+            </Link>
           </div>
 
           <div className={styles['right']}>
-            {isPublished ? <span>已发布</span> : <span>未发布</span>}
-            &nbsp;
-            <span>答卷:{answerCount}</span>
-            &nbsp;
-            <span>{createdAt}</span>
+            <Space>
+              {isPublished ? <Tag color="processing">已发布</Tag> : <Tag>未发布</Tag>}
+              <span>答卷:{answerCount}</span>
+              <span>{createdAt}</span>
+            </Space>
           </div>
         </div>
+
+        {/* 分割线 */}
+        <Divider style={{ margin: '12px 0' }}></Divider>
         {/* 下部分 */}
         <div className={styles['button-container']}>
           <div className={styles['left']}>
-            <button>编辑问卷</button>
-            <button>数据统计</button>
+            <Space>
+              <Button type="text" size="small" icon={<EditOutlined />} onClick={() => nav(`/question/edit/${id}`)}>
+                编辑问卷
+              </Button>
+              <Button
+                type="text"
+                size="small"
+                icon={<LineChartOutlined />}
+                disabled={!isPublished}
+                onClick={() => nav(`/question/stat/${id}`)}
+              >
+                数据统计
+              </Button>
+            </Space>
           </div>
           <div className={styles['right']}>
-            <button>标星</button>
-            <button>复制</button>
-            <button>删除</button>
+            <Space>
+              <Button type="text" size="small" icon={<StarOutlined />}>
+                {isStar ? '取星' : '标星'}
+              </Button>
+              <Button type="text" size="small" icon={<CopyOutlined />}>
+                复制
+              </Button>
+              <Button type="text" size="small" icon={<DeleteOutlined />}>
+                删除
+              </Button>
+            </Space>
           </div>
         </div>
       </div>

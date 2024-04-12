@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import QuestionCard from '../../components/QuestionCard'
 import { produce } from 'immer'
-import styles from './List.module.scss'
+import styles from './Common.module.scss'
 import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
 
@@ -68,26 +68,27 @@ const List2: FC = () => {
 
       {/* main：questionCard部分 */}
       <div className={styles['content']}>
-        {questionList.map(question => {
-          const { _id: id, title, isPublished, isStar, answerCount, createdAt } = question
-          return (
-            <QuestionCard
-              key={id}
-              id={id}
-              title={title}
-              isPublished={isPublished}
-              isStar={isStar}
-              answerCount={answerCount}
-              createdAt={createdAt}
-              // deleteQuestion={deleteQuestion}
-              // publishQuestion={publishQuestion}
-            />
-          )
-        })}
+        {questionList.length > 0 &&
+          questionList.map(question => {
+            const { _id: id, title, isPublished, isStar, answerCount, createdAt } = question
+            return (
+              <QuestionCard
+                key={id}
+                id={id}
+                title={title}
+                isPublished={isPublished}
+                isStar={isStar}
+                answerCount={answerCount}
+                createdAt={createdAt}
+                // deleteQuestion={deleteQuestion}
+                // publishQuestion={publishQuestion}
+              />
+            )
+          })}
       </div>
 
       {/* footer */}
-      <div className={styles['footer']}>footer</div>
+      <div className={styles['footer']}>footer ...上划加载更多</div>
 
       {/* <div>
         <button onClick={add}>新增问卷</button>
