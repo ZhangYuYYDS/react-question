@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
-import './QuesttionCard.css'
+import classNames from 'classnames'
+// import './QuestionCard.css'
+import styles from './QuestionCard.module.css'
 
 // ts 自定义类型
 type PropTypes = {
@@ -39,8 +41,18 @@ const QuestionCard: FC<PropTypes> = props => {
     publishQuestion && publishQuestion(id)
   }
 
+  // 简单处理，适用于一些简单的逻辑
+  // let itemClassName = 'list-item'
+  // isPublished && (itemClassName += ' published')
+
+  // 使用classnames库处理，可以处理一些复杂逻辑
+  const itemClassName = classNames(styles['list-item'], {
+    // published: isPublished,
+    [styles['published']]: isPublished,
+  })
+
   return (
-    <div key={id} className="list-item">
+    <div key={id} className={itemClassName}>
       <strong> {title}</strong>
       &nbsp;
       {isPublished ? <span style={{ color: 'green' }}>已发布</span> : <span style={{ color: 'red' }}>未发布</span>}
