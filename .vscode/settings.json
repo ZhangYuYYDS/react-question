@@ -7,8 +7,10 @@
         "antd",
         "Appstore",
         "commitlint",
+        "geekblue",
         "immer",
         "mainlayout",
+        "Popconfirm",
         "randow"
     ]
 }

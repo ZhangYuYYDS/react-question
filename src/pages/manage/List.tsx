@@ -4,12 +4,15 @@ import { produce } from 'immer'
 import styles from './Common.module.scss'
 import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
+import { Typography } from 'antd'
+
+const { Title } = Typography
 
 /**
  * - 组件是一个函数（执行返回 JSX 片段），组件初次渲染执行这个函数
  * - 任何 state 更新，都会触发组件的更新（也就是重新执行函数）
  */
-const List2: FC = () => {
+const List: FC = () => {
   // 设置页面标题
   useTitle('问卷星-我的问卷')
   // 解析并获取url参数
@@ -61,7 +64,7 @@ const List2: FC = () => {
       {/* 头部 */}
       <div className={styles['header']}>
         <div className={styles['left']}>
-          <h3>我的问卷</h3>
+          <Title level={3}>我的问卷</Title>
         </div>
         <div className={styles['right']}>{/* TODO:搜索框功能 */}搜索</div>
       </div>
@@ -97,4 +100,4 @@ const List2: FC = () => {
   )
 }
 
-export default List2
+export default List
