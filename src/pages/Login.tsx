@@ -87,11 +87,39 @@ const Login: FC = () => {
           autoComplete="off"
           form={form}
         >
-          <Form.Item<FieldType> label="用户名" name="username" rules={[{ required: true, message: '请输入用户名!' }]}>
+          <Form.Item<FieldType>
+            label="用户名"
+            name="username"
+            rules={[
+              { required: true, message: '请输入用户名!' },
+              {
+                type: 'string',
+                min: 6,
+                max: 20,
+                message: '用户名长度必须在6-20位',
+              },
+              {
+                pattern: /^\w+$/,
+                message: '只能是数组字母下划线',
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item<FieldType> label="密码" name="password" rules={[{ required: true, message: '请输入密码!' }]}>
+          <Form.Item<FieldType>
+            label="密码"
+            name="password"
+            rules={[
+              { required: true, message: '请输入密码!' },
+              {
+                type: 'string',
+                min: 6,
+                max: 20,
+                message: '密码长度必须在6-20位',
+              },
+            ]}
+          >
             <Input.Password />
           </Form.Item>
 
