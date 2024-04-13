@@ -17,6 +17,7 @@ type FieldType = {
 }
 
 const Register: FC = () => {
+  const [form] = Form.useForm()
   // 函数
   const onFinish: FormProps<FieldType>['onFinish'] = values => {
     console.log('Success:', values)
@@ -30,7 +31,7 @@ const Register: FC = () => {
   return (
     <div className={styles.container}>
       {/* 标题 */}
-      <div className={styles.title}>
+      <div>
         <Space>
           <Title level={2}>
             <UserAddOutlined />
@@ -40,7 +41,7 @@ const Register: FC = () => {
       </div>
 
       {/* 表单 */}
-      <div className={styles.form}>
+      <div>
         <Form
           name="basic"
           labelCol={{ span: 8 }}
@@ -54,7 +55,19 @@ const Register: FC = () => {
           <Form.Item<FieldType>
             label="用户名"
             name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[
+              { required: true, message: '请输入用户名!' },
+              {
+                type: 'string',
+                min: 6,
+                max: 20,
+                message: '用户名长度必须在6-20位',
+              },
+              {
+                pattern: /^\w+$/,
+                message: '只能是数组字母下划线',
+              },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -62,7 +75,15 @@ const Register: FC = () => {
           <Form.Item<FieldType>
             label="密码"
             name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[
+              { required: true, message: '请输入密码!' },
+              {
+                type: 'string',
+                min: 6,
+                max: 20,
+                message: '密码长度必须在6-20位',
+              },
+            ]}
           >
             <Input.Password />
           </Form.Item>
@@ -70,16 +91,23 @@ const Register: FC = () => {
           <Form.Item<FieldType>
             label="确认密码"
             name="confirm"
-            rules={[{ required: true, message: 'Please input your password again!' }]}
+            dependencies={['password']}
+            rules={[
+              { required: true, message: '请再次输入密码!' },
+              {
+                validator: (_, value) => {
+                  if (!value || form.getFieldValue('password') === value) {
+                    return Promise.resolve()
+                  }
+                  return Promise.reject(new Error('两次输入的密码不匹配!'))
+                },
+              },
+            ]}
           >
             <Input.Password />
           </Form.Item>
 
-          <Form.Item<FieldType>
-            label="昵称"
-            name="nickname"
-            rules={[{ required: true, message: 'Please input your nickname!' }]}
-          >
+          <Form.Item<FieldType> label="昵称" name="nickname" rules={[{ required: true, message: '请输入昵称!' }]}>
             <Input />
           </Form.Item>
 
