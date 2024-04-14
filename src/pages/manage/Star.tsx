@@ -1,20 +1,21 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { produce } from 'immer'
 import styles from './Common.module.scss'
-import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
-import { Typography, Empty } from 'antd'
+import { Typography, Empty, Spin } from 'antd'
 
 import QuestionCard from '../../components/QuestionCard'
 import ListSearch from '../../components/ListSearch'
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 
 const { Title } = Typography
 
 const Star: FC = () => {
-  const [questionList, setQuestionList] = useState([
-    { _id: '1', title: '问卷1', isPublished: true, isStar: true, answerCount: 100, createdAt: '2023.3.16 18:00' },
-    { _id: '2', title: '问卷2', isPublished: false, isStar: true, answerCount: 999, createdAt: '2024.4.12 13:14' },
-  ])
+  useTitle('问卷星-星标问卷')
+
+  const { loading, data = {} } = useLoadQuestionListData({ isStar: true })
+  const { list = [], total = 0 } = data
+
   return (
     <>
       {/* 头部 */}
@@ -29,9 +30,15 @@ const Star: FC = () => {
 
       {/* main：questionCard部分 */}
       <div className={styles.content}>
-        {questionList.length === 0 && <Empty description="暂无问卷" />}
-        {questionList.length > 0 &&
-          questionList.map(question => {
+        {loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading && list.length === 0 && <Empty description="暂无问卷" />}
+        {!loading &&
+          list.length > 0 &&
+          list.map((question: any) => {
             const { _id: id, title, isPublished, isStar, answerCount, createdAt } = question
             return (
               <QuestionCard
@@ -42,8 +49,6 @@ const Star: FC = () => {
                 isStar={isStar}
                 answerCount={answerCount}
                 createdAt={createdAt}
-                // deleteQuestion={deleteQuestion}
-                // publishQuestion={publishQuestion}
               />
             )
           })}
@@ -51,10 +56,6 @@ const Star: FC = () => {
 
       {/* footer */}
       <div className={styles['footer']}>分页</div>
-
-      {/* <div>
-        <button onClick={add}>新增问卷</button>
-      </div> */}
     </>
   )
 }

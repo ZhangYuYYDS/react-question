@@ -1,10 +1,12 @@
 import React, { FC, useState } from 'react'
-import styles from './Common.module.scss'
+import { useTitle } from 'ahooks'
 import type { TableProps } from 'antd'
-import { Typography, Empty, Space, Table, Tag, Button, Modal } from 'antd'
+import { Typography, Empty, Space, Table, Tag, Button, Modal, Spin } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
+import styles from './Common.module.scss'
 import ListSearch from '../../components/ListSearch'
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 
 const { Title } = Typography
 const { confirm } = Modal
@@ -19,10 +21,10 @@ interface DataType {
 }
 
 const Trash: FC = () => {
-  const [questionList, setQuestionList] = useState([
-    { _id: '1', title: '问卷1', isPublished: true, isStar: false, answerCount: 100, createdAt: '2023.3.16 18:00' },
-    { _id: '2', title: '问卷2', isPublished: false, isStar: true, answerCount: 999, createdAt: '2024.4.12 13:14' },
-  ])
+  useTitle('问卷星-回收站')
+
+  const { loading, data = {} } = useLoadQuestionListData({ isDeleted: true })
+  const { list = [], total = 0 } = data
 
   // 记录选中的id
   const [selectedRowIds, setSelectedRowKeys] = useState<React.Key[]>([])
@@ -86,7 +88,7 @@ const Trash: FC = () => {
       </div>
       <Table
         columns={columns}
-        dataSource={questionList}
+        dataSource={list}
         pagination={false}
         rowKey={q => q._id}
         rowSelection={{
@@ -114,8 +116,13 @@ const Trash: FC = () => {
 
       {/* main：questionCard部分 */}
       <div className={styles.content}>
-        {questionList.length === 0 && <Empty description="暂无问卷" />}
-        {questionList.length > 0 && tableElement}
+        {loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading && list.length === 0 && <Empty description="暂无问卷" />}
+        {!loading && list.length > 0 && tableElement}
       </div>
 
       {/* footer */}

@@ -1,14 +1,12 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { produce } from 'immer'
 import styles from './Common.module.scss'
-import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
 import { Typography, Spin } from 'antd'
-import { useRequest } from 'ahooks'
 
 import QuestionCard from '../../components/QuestionCard'
 import ListSearch from '../../components/ListSearch'
-import { getQuestionListService } from '../../services/question'
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 
 const { Title } = Typography
 
@@ -19,12 +17,9 @@ const { Title } = Typography
 const List: FC = () => {
   // 设置页面标题
   useTitle('问卷星-我的问卷')
-  // 解析并获取url参数
-  const [searchParams] = useSearchParams()
-  console.log('keyword', searchParams.get('keyword'))
 
-  // state是不可变数据，setState是修改state的唯一方式
-  const { loading, data = {} } = useRequest(getQuestionListService)
+  // 获取（查询）问卷列表数据
+  const { loading, data = {} } = useLoadQuestionListData({})
   const { list = [], total = 0 } = data
 
   return (
