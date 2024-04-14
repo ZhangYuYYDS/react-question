@@ -3,7 +3,7 @@ import { produce } from 'immer'
 import styles from './Common.module.scss'
 import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
-import { Typography } from 'antd'
+import { Typography, Spin } from 'antd'
 import { useRequest } from 'ahooks'
 
 import QuestionCard from '../../components/QuestionCard'
@@ -27,40 +27,6 @@ const List: FC = () => {
   const { loading, data = {} } = useRequest(getQuestionListService)
   const { list = [], total = 0 } = data
 
-  // 新增问卷
-  //   const add = () => {
-  //     console.log('add')
-  //     const randowId = Math.random().toString().slice(-3)
-  //     // immer的方式
-  //     setQuestionList(
-  //       produce(draft => {
-  //         draft.push({ id: `${randowId}`, title: `问卷${randowId}`, isPublished: true })
-  //       })
-  //     )
-  //   }
-
-  // 删除问卷
-  //   const deleteQuestion = (id: string) => {
-  //     // immer的方式
-  //     const index = questionList.findIndex(question => question.id === id)
-  //     setQuestionList(
-  //       produce(draft => {
-  //         draft.splice(index, 1)
-  //       })
-  //     )
-  //   }
-
-  // 发布问卷
-  //   const publishQuestion = (id: string) => {
-  //     // immer的方式
-  //     setQuestionList(
-  //       produce(draft => {
-  //         const index = draft.findIndex(question => question.id === id)
-  //         draft[index].isPublished = true
-  //       })
-  //     )
-  //   }
-
   return (
     <>
       {/* 头部 */}
@@ -75,7 +41,14 @@ const List: FC = () => {
 
       {/* main：questionCard部分 */}
       <div className={styles['content']}>
-        {list.length > 0 &&
+        {/* 加载中 */}
+        {loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading &&
+          list.length > 0 &&
           list.map((question: any) => {
             const { _id: id, title, isPublished, isStar, answerCount, createdAt } = question
             return (
@@ -87,8 +60,6 @@ const List: FC = () => {
                 isStar={isStar}
                 answerCount={answerCount}
                 createdAt={createdAt}
-                // deleteQuestion={deleteQuestion}
-                // publishQuestion={publishQuestion}
               />
             )
           })}
