@@ -4,9 +4,11 @@ import styles from './Common.module.scss'
 import { useSearchParams } from 'react-router-dom'
 import { useTitle } from 'ahooks'
 import { Typography } from 'antd'
+import { useRequest } from 'ahooks'
 
 import QuestionCard from '../../components/QuestionCard'
 import ListSearch from '../../components/ListSearch'
+import { getQuestionListService } from '../../services/question'
 
 const { Title } = Typography
 
@@ -22,10 +24,8 @@ const List: FC = () => {
   console.log('keyword', searchParams.get('keyword'))
 
   // state是不可变数据，setState是修改state的唯一方式
-  const [questionList, setQuestionList] = useState([
-    { _id: '1', title: '问卷1', isPublished: true, isStar: true, answerCount: 100, createdAt: '2023.3.16 18:00' },
-    { _id: '2', title: '问卷2', isPublished: false, isStar: false, answerCount: 999, createdAt: '2024.4.12 13:14' },
-  ])
+  const { loading, data = {} } = useRequest(getQuestionListService)
+  const { list = [], total = 0 } = data
 
   // 新增问卷
   //   const add = () => {
@@ -75,8 +75,8 @@ const List: FC = () => {
 
       {/* main：questionCard部分 */}
       <div className={styles['content']}>
-        {questionList.length > 0 &&
-          questionList.map(question => {
+        {list.length > 0 &&
+          list.map((question: any) => {
             const { _id: id, title, isPublished, isStar, answerCount, createdAt } = question
             return (
               <QuestionCard

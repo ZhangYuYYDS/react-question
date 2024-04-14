@@ -13,3 +13,10 @@ export async function createQuestionService(): Promise<ResDataType> {
   const data = (await axios.post(url)) as ResDataType
   return data
 }
+
+// 获取（查询）问卷
+export async function getQuestionListService(): Promise<ResDataType> {
+  const url = '/api/question'
+  const data = (await axios.get(url)) as ResDataType
+  return data
+}
