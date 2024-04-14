@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { List_PathNAME } from '../router'
+import axios from 'axios'
 import styles from './Home.module.scss'
 import { useNavigate } from 'react-router-dom'
 import { Button, Typography } from 'antd'
@@ -15,6 +16,12 @@ const Home = () => {
     // 使用第三方库实现
     nav(List_PathNAME)
   }
+
+  useEffect(() => {
+    // 3001是后端给的端口号，和3000不在同一域名下，涉及到跨域问题
+    // 这里需要配置代理，才能正常访问
+    axios.get('/api/test').then(res => console.log('axios data', res.data))
+  })
 
   return (
     <div className={styles.container}>

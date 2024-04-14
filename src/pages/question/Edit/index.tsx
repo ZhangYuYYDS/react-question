@@ -1,11 +1,16 @@
-import React, { FC } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { FC, useEffect, useState } from 'react'
+import useLoadQuestionData from '../../../hooks/useLoadQuestionData'
 
 // 获取动态参数
 const edit: FC = () => {
-  // 获取动态路由中的动态参数
-  const { id = '' } = useParams()
-  return <div>edit页面~~~~~~{id}</div>
+  const { loading, questionData } = useLoadQuestionData()
+
+  return (
+    <div>
+      <p>Edit page</p>
+      {loading ? <p>loading</p> : <p>{JSON.stringify(questionData)}</p>}
+    </div>
+  )
 }
 
 export default edit
