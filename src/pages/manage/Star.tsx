@@ -2,10 +2,11 @@ import React, { FC } from 'react'
 import { produce } from 'immer'
 import styles from './Common.module.scss'
 import { useTitle } from 'ahooks'
-import { Typography, Empty, Spin } from 'antd'
+import { Typography, Empty, Spin, Pagination } from 'antd'
 
 import QuestionCard from '../../components/QuestionCard'
 import ListSearch from '../../components/ListSearch'
+import ListPage from '../../components/ListPage'
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 
 const { Title } = Typography
@@ -55,7 +56,9 @@ const Star: FC = () => {
       </div>
 
       {/* footer */}
-      <div className={styles['footer']}>分页</div>
+      <div className={styles['footer']}>
+        <ListPage total={total} />
+      </div>
     </>
   )
 }

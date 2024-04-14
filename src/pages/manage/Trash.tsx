@@ -6,6 +6,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import styles from './Common.module.scss'
 import ListSearch from '../../components/ListSearch'
+import ListPage from '../../components/ListPage'
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
 
 const { Title } = Typography
@@ -126,11 +127,9 @@ const Trash: FC = () => {
       </div>
 
       {/* footer */}
-      <div className={styles['footer']}>分页</div>
-
-      {/* <div>
-        <button onClick={add}>新增问卷</button>
-      </div> */}
+      <div className={styles['footer']}>
+        <ListPage total={total} />
+      </div>
     </>
   )
 }
