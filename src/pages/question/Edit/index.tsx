@@ -3,12 +3,12 @@ import useLoadQuestionData from '../../../hooks/useLoadQuestionData'
 
 // 获取动态参数
 const edit: FC = () => {
-  const { loading, questionData } = useLoadQuestionData()
+  const { loading, data } = useLoadQuestionData()
 
   return (
     <div>
       <p>Edit page</p>
-      {loading ? <p>loading</p> : <p>{JSON.stringify(questionData)}</p>}
+      {loading ? <p>loading</p> : <p>{JSON.stringify(data)}</p>}
     </div>
   )
 }

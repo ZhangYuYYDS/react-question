@@ -1,7 +1,8 @@
 import React, { FC, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import styles from './ManageLayout.module.scss'
+import { useRequest } from 'ahooks'
 import { Button, Divider, Flex, message } from 'antd'
+import styles from './ManageLayout.module.scss'
 import { BarsOutlined, DeleteOutlined, PlusOutlined, StarOutlined } from '@ant-design/icons'
 import { createQuestionService } from '../services/question'
 
@@ -15,20 +16,16 @@ const ManageLayout: FC = () => {
   const activeButtonStyle = { border: '1px solid #1890ff', boxShadow: '0 0 4px #1890ff' }
 
   // 新建问卷处理
-  const [loading, setLoading] = useState(false)
-
-  async function handleCreateClick() {
-    setLoading(true)
-    const data = await createQuestionService()
-    const { id } = data
-    if (id) {
-      nav(`/question/edit/${id}`)
-      message.success('新建问卷成功')
-    }
-    console.log(data)
-
-    setLoading(false)
-  }
+  const {
+    loading,
+    error,
+    run: handleCreateClick,
+  } = useRequest(createQuestionService, {
+    manual: true,
+    onSuccess(result) {
+      nav(`/question/edit/${result.id}`)
+    },
+  })
 
   return (
     <div className={styles.container}>
