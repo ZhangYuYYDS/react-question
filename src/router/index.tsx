@@ -85,5 +85,14 @@ export const Star_PathNAME = '/manage/star'
 export const Trash_PathNAME = '/manage/trash'
 // export const Edit_PathNAME = `/question/edit/${id}`
 // export const Stat_PathNAME = '/question/stat/:id'
-
 // ---------------------------分割线
+
+export function isLoginOrRegister(pathname: string) {
+  if ([Login_PathNAME, Register_PathNAME].includes(pathname)) return true
+  return false
+}
+
+export function isNoNeedUserInfo(pathname: string) {
+  if ([Home_PathNAME, Login_PathNAME, Register_PathNAME].includes(pathname)) return true
+  return false
+}

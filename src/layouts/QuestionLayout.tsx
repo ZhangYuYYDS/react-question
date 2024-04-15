@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { Outlet } from 'react-router-dom'
+import useLoadUserData from '../hooks/useLoadUserData'
 
 const QuestionLayout: FC = () => {
+  const { waitingUserData } = useLoadUserData()
   return (
     <>
       <p>Question layout</p>
-      <div>
-        <Outlet></Outlet>
-      </div>
+      <div>{!waitingUserData && <Outlet />}</div>
     </>
   )
 }

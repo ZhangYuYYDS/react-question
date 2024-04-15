@@ -13,6 +13,7 @@
         "mainlayout",
         "mockjs",
         "Popconfirm",
-        "randow"
+        "randow",
+        "reduxjs"
     ]
 }
