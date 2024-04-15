@@ -1,13 +1,14 @@
 import React, { FC, useState } from 'react'
-import { useTitle } from 'ahooks'
+import { useTitle, useRequest } from 'ahooks'
 import type { TableProps } from 'antd'
-import { Typography, Empty, Space, Table, Tag, Button, Modal, Spin } from 'antd'
+import { Typography, Empty, Space, Table, Tag, Button, Modal, Spin, message } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 import styles from './Common.module.scss'
 import ListSearch from '../../components/ListSearch'
 import ListPage from '../../components/ListPage'
 import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
+import { updateQuestionService, deleteQuestionsService } from '../../services/question'
 
 const { Title } = Typography
 const { confirm } = Modal
@@ -24,11 +25,50 @@ interface DataType {
 const Trash: FC = () => {
   useTitle('问卷星-回收站')
 
-  const { loading, data = {} } = useLoadQuestionListData({ isDeleted: true })
+  const { data = {}, loading, refresh } = useLoadQuestionListData({ isDeleted: true })
   const { list = [], total = 0 } = data
 
   // 记录选中的id
-  const [selectedRowIds, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  // 恢复
+  const { run: recover } = useRequest(
+    async () => {
+      for await (const id of selectedIds) {
+        await updateQuestionService(id, { isDeleted: false })
+      }
+    },
+    {
+      manual: true,
+      debounceWait: 500, // 防抖
+      onSuccess() {
+        message.success('恢复成功')
+        refresh() // 手动刷新列表
+        setSelectedIds([])
+      },
+    }
+  )
+
+  // 删除
+  const { run: deleteQuestion } = useRequest(async () => await deleteQuestionsService(selectedIds), {
+    manual: true,
+    onSuccess() {
+      message.success('删除成功')
+      refresh()
+      setSelectedIds([])
+    },
+  })
+
+  const del = () => {
+    confirm({
+      title: '确认彻底删除该问卷？',
+      icon: <ExclamationCircleOutlined />,
+      content: '删除以后无法找回',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: deleteQuestion,
+    })
+  }
 
   const columns: TableProps<DataType>['columns'] = [
     {
@@ -59,30 +99,14 @@ const Trash: FC = () => {
     },
   ]
 
-  const del = () => {
-    confirm({
-      title: '确认彻底删除该问卷？',
-      icon: <ExclamationCircleOutlined />,
-      content: '删除以后无法找回',
-      okText: '确认',
-      cancelText: '取消',
-      onOk: () => {
-        console.log('delete~~~')
-      },
-      onCancel: () => {
-        console.log('cancel~~~~~')
-      },
-    })
-  }
-
   const tableElement = (
     <>
       <div style={{ marginBottom: '16px' }}>
         <Space>
-          <Button type="primary" size="small" disabled={selectedRowIds.length === 0 ? true : false}>
+          <Button type="primary" size="small" disabled={selectedIds.length === 0 ? true : false} onClick={recover}>
             恢复
           </Button>
-          <Button danger size="small" onClick={del} disabled={selectedRowIds.length === 0 ? true : false}>
+          <Button danger size="small" disabled={selectedIds.length === 0 ? true : false} onClick={del}>
             删除
           </Button>
         </Space>
@@ -96,7 +120,7 @@ const Trash: FC = () => {
           type: 'checkbox',
           // selectedRowKeys选中的id，selectedRows选中的行信息
           onChange: (selectedRowIds: React.Key[], selectedRows: DataType[]) => {
-            setSelectedRowKeys(selectedRowIds)
+            setSelectedIds(selectedRowIds as string[])
           },
         }}
       />

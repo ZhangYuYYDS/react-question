@@ -15,7 +15,7 @@ const useLoadQuestionListData = (opt: Partial<OptionType>) => {
   // 解析并获取url参数
   const [searchParams] = useSearchParams()
 
-  const { loading, data, error } = useRequest(
+  const { loading, data, error, refresh } = useRequest(
     async () => {
       const keyword = searchParams.get(LIST_SEARCH_PARAM_KEY) || ''
       const page = parseInt(searchParams.get(LIST_PAGE_PARAM_KEY) || '') || 1
@@ -28,7 +28,7 @@ const useLoadQuestionListData = (opt: Partial<OptionType>) => {
     }
   )
 
-  return { loading, data, error }
+  return { loading, data, error, refresh }
 }
 
 export default useLoadQuestionListData

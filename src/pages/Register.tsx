@@ -1,8 +1,12 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
-import { Typography, Space, Form, Input, Button, Checkbox, type FormProps } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
+import { Typography, Space, Form, Input, Button, Checkbox, message } from 'antd'
 import { UserAddOutlined } from '@ant-design/icons'
+import { useRequest } from 'ahooks'
+
 import styles from './Register.module.scss'
+import { registerService } from '../services/user'
+
 import { Login_PathNAME } from '../router'
 
 const { Title } = Typography
@@ -17,14 +21,26 @@ type FieldType = {
 }
 
 const Register: FC = () => {
-  const [form] = Form.useForm()
-  // 函数
-  const onFinish: FormProps<FieldType>['onFinish'] = values => {
-    console.log('Success:', values)
-  }
+  const nav = useNavigate()
 
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = errorInfo => {
-    console.log('Failed:', errorInfo)
+  const { run } = useRequest(
+    async values => {
+      const { username, password, nickname } = values
+      await registerService(username, password, nickname)
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success('注册成功')
+        nav(Login_PathNAME) // 跳转到登录页
+      },
+    }
+  )
+
+  // 函数
+  const onFinish = (values: any) => {
+    console.log('Success:', values)
+    run(values) // 调用 ajax
   }
 
   // JSX
@@ -49,7 +65,6 @@ const Register: FC = () => {
           style={{ maxWidth: 600 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item<FieldType>
@@ -94,14 +109,15 @@ const Register: FC = () => {
             dependencies={['password']}
             rules={[
               { required: true, message: '请再次输入密码!' },
-              {
+              ({ getFieldValue }) => ({
                 validator: (_, value) => {
-                  if (!value || form.getFieldValue('password') === value) {
+                  if (!value || getFieldValue('password') === value) {
                     return Promise.resolve()
+                  } else {
+                    return Promise.reject(new Error('两次输入的密码不一致!'))
                   }
-                  return Promise.reject(new Error('两次输入的密码不匹配!'))
                 },
-              },
+              }),
             ]}
           >
             <Input.Password />

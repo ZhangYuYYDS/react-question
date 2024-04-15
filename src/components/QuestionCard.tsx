@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import classNames from 'classnames'
 import styles from './QuestionCard.module.scss'
@@ -12,6 +12,8 @@ import {
   CopyOutlined,
   StarFilled,
 } from '@ant-design/icons'
+import { updateQuestionService, duplicateQuestionService } from '../services/question'
+import { useRequest } from 'ahooks'
 
 // ts 自定义类型
 type PropTypes = {
@@ -21,62 +23,53 @@ type PropTypes = {
   isStar?: boolean
   answerCount?: number
   createdAt?: string
-  deleteQuestion?: (id: string) => void
-  publishQuestion?: (id: string) => void
 }
 
 const QuestionCard: FC<PropTypes> = props => {
-  const { id, title, isPublished, isStar, answerCount, createdAt, deleteQuestion, publishQuestion } = props
+  const { id, title, isPublished, isStar, answerCount, createdAt } = props
 
   // 路由跳转
   const nav = useNavigate()
 
-  // 编辑问卷
-  // const edit = (id: string) => {
-  //   console.log(`编辑问卷${id}`)
-  // }
+  // 修改 标星
+  const [isStarState, setIsStarState] = useState(isStar)
+  const { loading: changeStarLoading, run: changeStar } = useRequest(
+    async () => {
+      await updateQuestionService(id, { isStar: !isStarState })
+    },
+    {
+      manual: true,
+      onSuccess() {
+        setIsStarState(!isStarState) // 更新 state
+        message.success('已更新')
+      },
+    }
+  )
 
-  /**
-   * ! 删除问卷
-   * * 删除问卷需要用到父组件里面的questionList数据
-   * - 父函数中有一个del函数，负责删除问卷
-   * - 子组件只需要拿到del函数并调用即可
-   */
-  // const del = (id: string) => {
-  //   console.log(`delete question ${id}`)
-  //   deleteQuestion && deleteQuestion(id)
-  // }
-
-  /**
-   * ! 发布问卷
-   * * 发布问卷需要用到父组件里面的questionList数据
-   * - 父函数中有一个pub函数，负责修改questionList中的isPublished属性
-   * - 子组件只需要拿到pub函数并调用即可
-   */
-  // const pub = (id: string) => {
-  //   console.log(`publish question ${id}`)
-  //   publishQuestion && publishQuestion(id)
-  // }
-
-  const duplicateConfirm: PopconfirmProps['onConfirm'] = e => {
-    console.log(e)
-    message.success('已复制')
-  }
-
-  const deleteConfirm: PopconfirmProps['onConfirm'] = e => {
-    console.log(e)
-    message.success('已删除')
-  }
-
-  // 简单处理，适用于一些简单的逻辑
-  // let itemClassName = 'list-item'
-  // isPublished && (itemClassName += ' published')
-
-  // 使用classnames库处理，可以处理一些复杂逻辑
-  const itemClassName = classNames(styles['list-item'], {
-    // published: isPublished,
-    [styles['published']]: isPublished,
+  // 复制
+  const { loading: duplicateLoading, run: duplicate } = useRequest(async () => await duplicateQuestionService(id), {
+    manual: true,
+    onSuccess(result) {
+      message.success('复制成功')
+      nav(`/question/edit/${result.id}`) // 跳转到问卷编辑页
+    },
   })
+
+  // 删除
+  const [isDeletedState, setIsDeletedState] = useState(false)
+  const { loading: deleteLoading, run: deleteQuestion } = useRequest(
+    async () => await updateQuestionService(id, { isDeleted: true }),
+    {
+      manual: true,
+      onSuccess(result) {
+        message.success('删除成功')
+        setIsDeletedState(true)
+      },
+    }
+  )
+
+  // 已经删除的问卷不要再渲染卡片了
+  if (isDeletedState) return null
 
   return (
     <>
@@ -88,7 +81,7 @@ const QuestionCard: FC<PropTypes> = props => {
             <Link to={isPublished ? `/question/stat/${id}` : `/question/edit/${id}`}>
               <Space>
                 {title}
-                {isStar ? <StarFilled style={{ color: 'rgb(252, 248, 5)' }} /> : <StarOutlined />}
+                {isStarState ? <StarFilled style={{ color: 'rgb(252, 248, 5)' }} /> : <StarOutlined />}
               </Space>
             </Link>
           </div>
@@ -127,19 +120,21 @@ const QuestionCard: FC<PropTypes> = props => {
               <Button
                 type="text"
                 size="small"
-                icon={isStar ? <StarFilled style={{ color: 'rgb(252, 248, 5)' }} /> : <StarOutlined />}
+                icon={isStarState ? <StarFilled style={{ color: 'rgb(252, 248, 5)' }} /> : <StarOutlined />}
+                onClick={changeStar}
+                disabled={changeStarLoading}
               >
-                {isStar ? '取星' : '标星'}
+                {isStarState ? '取星' : '标星'}
               </Button>
 
-              <Popconfirm title="确定复制该问卷吗？" onConfirm={duplicateConfirm} okText="确定" cancelText="取消">
-                <Button type="text" size="small" icon={<CopyOutlined />}>
+              <Popconfirm title="确定复制该问卷？" okText="确定" cancelText="取消" onConfirm={duplicate}>
+                <Button type="text" icon={<CopyOutlined />} size="small" disabled={duplicateLoading}>
                   复制
                 </Button>
               </Popconfirm>
 
-              <Popconfirm title="确定删除该问卷吗？" onConfirm={deleteConfirm} okText="确定" cancelText="取消">
-                <Button type="text" size="small" icon={<DeleteOutlined />}>
+              <Popconfirm title="确定删除该问卷吗？" okText="确定" cancelText="取消" onConfirm={deleteQuestion}>
+                <Button type="text" size="small" icon={<DeleteOutlined />} disabled={deleteLoading}>
                   删除
                 </Button>
               </Popconfirm>
